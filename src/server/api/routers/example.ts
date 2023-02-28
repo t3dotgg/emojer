@@ -29,9 +29,9 @@ export const exampleRouter = createTRPCRouter({
 
     const userIds = posts.map((post) => post.authorId);
 
-    const users = await (
-      await clerkClient.users.getUserList({ userId: userIds })
-    ).map(filterUser);
+    const users = await clerkClient.users
+      .getUserList({ userId: userIds })
+      .then((user) => user.map(filterUser));
 
     return posts.map((post) => ({
       ...post,
