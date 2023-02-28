@@ -43,7 +43,7 @@ const TweetView = (props: { tweet: TweetData }) => {
         />
         <div className="ml-3 flex flex-col text-2xl">
           <div className="text-base font-bold text-slate-300">
-            <span>{`@ ${props.tweet.user.username}`}</span>
+            <span>{`@${props.tweet.user.username}`}</span>
             <span className="font-thin">{` · ${dayjs(
               props.tweet.createdAt
             ).fromNow()}`}</span>
@@ -95,7 +95,7 @@ const CreatePostWizard = () => {
 const Feed = () => {
   const { data } = api.example.getAll.useQuery();
   return (
-    <div className="flex h-full w-[600px] grow flex-col border-l border-r border-zinc-700">
+    <div className="flex h-full w-full grow flex-col border-l border-r border-zinc-700 md:w-[600px]">
       <CreatePostWizard />
       {data?.map((post) => (
         <TweetView key={post.id} tweet={post} />
