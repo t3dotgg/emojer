@@ -58,18 +58,36 @@ const TweetView = (props: { tweet: TweetData }) => {
 const CreatePostWizard = () => {
   const [content, setContent] = useState("");
 
+  const ctx = api.useContext();
   const { mutate, isLoading } = api.example.createPost.useMutation({
-    onSuccess: () => setContent(""),
+    onSuccess: () => {
+      setContent("");
+      ctx.invalidate();
+    },
   });
 
+  const { user } = useUser();
+
   return (
-    <div className="flex w-48 justify-center p-4">
-      <textarea
+    <div className="relative flex w-full">
+      <img
+        src={user?.profileImageUrl}
+        alt="Profile"
+        className="m-4 h-14 w-14 rounded-full"
+      />
+      <input
         value={content}
         onChange={(e) => setContent(e.target.value)}
         disabled={isLoading}
+        className="my-4 grow bg-transparent py-4 pr-20 text-xl outline-none"
+        placeholder="Type some emojis"
+        autoFocus
       />
-      <button onClick={() => mutate({ message: content })}>Create</button>
+      <div className="absolute right-2 flex h-full flex-col justify-center">
+        {!!content && (
+          <button onClick={() => mutate({ message: content })}>POST!</button>
+        )}
+      </div>
     </div>
   );
 };
