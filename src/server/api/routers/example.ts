@@ -7,6 +7,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+import { emojiValidator } from "~/shared/emojiValidator";
 
 const filterUser = (user: ClerkUser) => {
   return {
@@ -41,4 +42,17 @@ export const exampleRouter = createTRPCRouter({
   self: protectedProcedure.query(async ({ ctx }) => {
     return ctx.session;
   }),
+
+  createPost: protectedProcedure
+    .input(emojiValidator)
+    .mutation(async ({ ctx, input }) => {
+      const post = await ctx.prisma.post.create({
+        data: {
+          content: input.message,
+          authorId: ctx.session.userId,
+        },
+      });
+
+      return post;
+    }),
 });

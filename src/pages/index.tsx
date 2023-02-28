@@ -3,6 +3,7 @@ import { InferQueryResult } from "@trpc/react-query/dist/utils/inferReactQueryPr
 import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import { useState } from "react";
 
 import { api, RouterOutputs } from "~/utils/api";
 
@@ -54,6 +55,25 @@ const TweetView = (props: { tweet: TweetData }) => {
   );
 };
 
+const CreatePostWizard = () => {
+  const [content, setContent] = useState("");
+
+  const { mutate, isLoading } = api.example.createPost.useMutation({
+    onSuccess: () => setContent(""),
+  });
+
+  return (
+    <div>
+      <textarea
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        disabled={isLoading}
+      />
+      <button onClick={() => mutate({ message: content })}>Create</button>
+    </div>
+  );
+};
+
 const Home: NextPage = () => {
   const hello = api.example.getAll.useQuery();
 
@@ -66,6 +86,8 @@ const Home: NextPage = () => {
       </Head>
       <main className="flex min-h-screen flex-col items-center bg-gray-700">
         <TopNav />
+
+        <CreatePostWizard />
 
         <div className="flex flex-col">
           {hello.data?.map((item) => (
