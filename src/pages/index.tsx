@@ -4,6 +4,10 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useState } from "react";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
 
 import { api, RouterOutputs } from "~/utils/api";
 
@@ -35,20 +39,16 @@ const TweetView = (props: { tweet: TweetData }) => {
         <img
           src={props.tweet.user.profileImageUrl}
           alt="Profile"
-          className="h-10 w-10 rounded-full"
+          className="h-14 w-14 rounded-full"
         />
-        <div className="ml-3">
-          <div className="text-sm font-bold text-gray-500">
-            {"@" + props.tweet.user.username}
+        <div className="ml-3 flex flex-col text-2xl">
+          <div className="text-base font-bold text-slate-300">
+            <span>{`@ ${props.tweet.user.username}`}</span>
+            <span className="font-thin">{` · ${dayjs(
+              props.tweet.createdAt
+            ).fromNow()}`}</span>
           </div>
-        </div>
-      </div>
-      <div className="mt-4">
-        <div className="text-gray-700">{props.tweet.content}</div>
-      </div>
-      <div className="mt-4">
-        <div className="text-sm text-gray-500">
-          {new Date(props.tweet.createdAt).toLocaleString()}
+          <div className="text-slate-300">{props.tweet.content}</div>
         </div>
       </div>
     </div>
@@ -95,8 +95,6 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center bg-black text-white">
-        {/* <TopNav /> */}
-
         <Feed />
       </main>
     </>

@@ -26,7 +26,9 @@ export const exampleRouter = createTRPCRouter({
       };
     }),
   getAll: publicProcedure.query(async ({ ctx }) => {
-    const posts = await ctx.prisma.post.findMany();
+    const posts = await ctx.prisma.post.findMany({
+      orderBy: { createdAt: "desc" },
+    });
 
     const userIds = posts.map((post) => post.authorId);
 
