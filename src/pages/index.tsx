@@ -1,5 +1,4 @@
 import { useUser } from "@clerk/nextjs";
-import { InferQueryResult } from "@trpc/react-query/dist/utils/inferReactQueryProcedure";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -11,46 +10,29 @@ dayjs.extend(relativeTime);
 
 import { api, RouterOutputs } from "~/utils/api";
 
-const TopNav = () => {
-  const user = useUser();
-
-  return (
-    <nav className="flex w-full flex-wrap items-center justify-between bg-gray-800 p-6 shadow-lg">
-      <div className="mr-6 flex flex-shrink-0 items-center text-white">
-        <span className="text-xl font-semibold tracking-tight">😶 Emojer</span>
-      </div>
-      <div>
-        <img
-          src={user.user?.profileImageUrl}
-          alt="Profile"
-          className="h-10 w-10 rounded-full"
-        />
-      </div>
-    </nav>
-  );
-};
-
 type TweetData = RouterOutputs["example"]["getAll"][number];
 
 const TweetView = (props: { tweet: TweetData }) => {
   return (
     <div className="border-t border-zinc-700 p-4 shadow-lg">
-      <div className="flex items-center">
-        <img
-          src={props.tweet.user.profileImageUrl}
-          alt="Profile"
-          className="h-14 w-14 rounded-full"
-        />
-        <div className="ml-3 flex flex-col text-2xl">
-          <div className="text-base font-bold text-slate-300">
-            <span>{`@${props.tweet.user.username}`}</span>
-            <span className="font-thin">{` · ${dayjs(
-              props.tweet.createdAt
-            ).fromNow()}`}</span>
+      <Link href={`/post/${props.tweet.id}`}>
+        <div className="flex items-center">
+          <img
+            src={props.tweet.user.profileImageUrl}
+            alt="Profile"
+            className="h-14 w-14 rounded-full"
+          />
+          <div className="ml-3 flex flex-col text-2xl">
+            <div className="text-base font-bold text-slate-300">
+              <span>{`@${props.tweet.user.username}`}</span>
+              <span className="font-thin">{` · ${dayjs(
+                props.tweet.createdAt
+              ).fromNow()}`}</span>
+            </div>
+            <div className="text-slate-300">{props.tweet.content}</div>
           </div>
-          <div className="text-slate-300">{props.tweet.content}</div>
         </div>
-      </div>
+      </Link>
     </div>
   );
 };

@@ -32,7 +32,7 @@ function MainApp({ Component, pageProps }: AppProps) {
       ) : (
         <>
           <SignedIn>
-            <div>Hi</div>
+            <Component {...pageProps} />
           </SignedIn>
           <SignedOut>
             <RedirectToSignIn />

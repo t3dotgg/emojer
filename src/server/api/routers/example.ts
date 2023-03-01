@@ -45,6 +45,24 @@ export const exampleRouter = createTRPCRouter({
     return ctx.session;
   }),
 
+  getPostById: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const post = await ctx.prisma.post.findUnique({
+        where: { id: input.id },
+      });
+
+      if (!post) throw new Error("Post not found");
+
+      const user = await clerkClient.users
+        .getUser(post!.authorId)
+        .then(filterUser);
+
+      if (!user) throw new Error("Poster not found");
+
+      return { ...post, user };
+    }),
+
   createPost: protectedProcedure
     .input(emojiValidator)
     .mutation(async ({ ctx, input }) => {
