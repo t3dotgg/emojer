@@ -1,9 +1,9 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
+import type { User } from "@clerk/nextjs/dist/api";
 import { useState } from "react";
 
-const CreatePostWizard = () => {
+const CreatePostWizard = (props: { self: User }) => {
   const [content, setContent] = useState("");
 
   //   const ctx = api.useContext();
@@ -14,15 +14,13 @@ const CreatePostWizard = () => {
   //     },
   //   });
 
-  const mutate = () => null;
+  const mutate = (input: { message: string }) => null;
   const isLoading = false;
-
-  const { user } = useUser();
 
   return (
     <div className="relative flex w-full">
       <img
-        src={user?.profileImageUrl}
+        src={props.self?.profileImageUrl}
         alt="Profile"
         className="m-4 h-14 w-14 rounded-full"
       />
