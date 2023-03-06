@@ -1,4 +1,8 @@
-import { type NextPage } from "next";
+import {
+  GetServerSidePropsContext,
+  InferGetServerSidePropsType,
+  type NextPage,
+} from "next";
 import Head from "next/head";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -42,13 +46,13 @@ const Feed = (props: { id: string }) => {
   );
 };
 
-const PostView: NextPage = () => {
-  const { query } = useRouter();
-  console.log("router", query);
-
-  if (!query.id || typeof query.id !== "string") {
-    return <div>Not found</div>;
-  }
+const PostView = (
+  props: InferGetServerSidePropsType<typeof getServerSideProps>
+) => {
+  const data = api.profile.getProfileByUsername.useQuery({
+    username: props.slug,
+  });
+  console.log("data", data);
 
   return (
     <>
@@ -58,10 +62,38 @@ const PostView: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col items-center bg-black text-white">
-        <Feed id={query.id} />
+        <div>{data.data?.username}</div>
       </main>
     </>
   );
 };
 
 export default PostView;
+
+import superjson from "superjson";
+import { createProxySSGHelpers } from "@trpc/react-query/ssg";
+import { appRouter } from "~/server/api/root";
+import { prisma } from "~/server/db";
+
+export async function getServerSideProps(
+  context: GetServerSidePropsContext<{ slug: string }>
+) {
+  const ssg = createProxySSGHelpers({
+    router: appRouter,
+    ctx: { session: null, prisma },
+    transformer: superjson,
+  });
+  const slug = context.params?.slug as string;
+  /*
+   * Prefetching the `post.byId` query here.
+   * `prefetch` does not return the result and never throws - if you need that behavior, use `fetch` instead.
+   */
+  await ssg.profile.getProfileByUsername.prefetch({ username: slug });
+  // Make sure to return { props: { trpcState: ssg.dehydrate() } }
+  return {
+    props: {
+      trpcState: ssg.dehydrate(),
+      slug,
+    },
+  };
+}

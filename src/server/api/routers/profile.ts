@@ -37,4 +37,17 @@ export const profileRouter = createTRPCRouter({
 
       return { user, posts };
     }),
+
+  getProfileByUsername: publicProcedure
+    .input(z.object({ username: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const userPromise = clerkClient.users
+        .getUserList({ username: [input.username] })
+        .then((m) => m.map(filterUser));
+      const [user] = await userPromise;
+
+      if (!user) throw new Error("User not found");
+
+      return user;
+    }),
 });

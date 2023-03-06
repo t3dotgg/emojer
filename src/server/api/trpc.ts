@@ -29,7 +29,9 @@ export const createTRPCContext = (opts: CreateNextContextOptions) => {
   const { req } = opts;
   const session = getAuth(req);
   console.log("sesh?", session);
-  return { session, prisma };
+
+  // make session nullable so typing overrides isn't hellish
+  return { session: session as ReturnType<typeof getAuth> | null, prisma };
 };
 
 /**
