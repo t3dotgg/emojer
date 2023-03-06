@@ -5,6 +5,7 @@ import {
   RedirectToSignIn,
 } from "@clerk/nextjs";
 import { AppProps } from "next/app";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import "~/styles/globals.css";
 
@@ -27,6 +28,10 @@ function MainApp({ Component, pageProps }: AppProps) {
   // Otherwise, use Clerk to require authentication
   return (
     <ClerkProvider>
+      <Head>
+        <title>😶 Emojer</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       {isPublicPage ? (
         <Component {...pageProps} />
       ) : (

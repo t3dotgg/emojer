@@ -56,6 +56,28 @@ export const postsRouter = createTRPCRouter({
       return { ...post, user };
     }),
 
+  getPostsByUserId: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const posts = await ctx.prisma.post.findMany({
+        where: { authorId: input.id },
+        orderBy: { createdAt: "desc" },
+      });
+
+      const userIds = posts.map((post) => post.authorId);
+
+      const users = await clerkClient.users
+        .getUserList({ userId: userIds })
+        .then((user) => user.map(filterUser));
+
+      if (posts.length === 0) throw new Error("No posts from this user");
+
+      return posts.map((post) => ({
+        ...post,
+        user: users.find((user) => user.id === post.authorId)!,
+      }));
+    }),
+
   createPost: protectedProcedure
     .input(emojiValidator)
     .mutation(async ({ ctx, input }) => {
