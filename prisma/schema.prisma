@@ -17,4 +17,7 @@ model Post {
     content   String?  @db.VarChar(255)
     published Boolean  @default(false)
     authorId  String
+
+    // index by authorId
+    @@index([authorId])
 }

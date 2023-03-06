@@ -11,18 +11,20 @@ dayjs.extend(relativeTime);
 import { api, RouterOutputs } from "~/utils/api";
 import { Loading } from "~/components/loading";
 
-type TweetData = RouterOutputs["example"]["getAll"][number];
+type TweetData = RouterOutputs["posts"]["getAll"][number];
 
 const TweetView = (props: { tweet: TweetData }) => {
   return (
     <div className="border-t border-zinc-700 p-4 shadow-lg">
       <Link href={`/post/${props.tweet.id}`}>
         <div className="flex items-center">
-          <img
-            src={props.tweet.user.profileImageUrl}
-            alt="Profile"
-            className="h-14 w-14 rounded-full"
-          />
+          <Link href={`/profile/${props.tweet.user.username}`}>
+            <img
+              src={props.tweet.user.profileImageUrl}
+              alt={`Profile for ${props.tweet.user.username}`}
+              className="h-14 w-14 rounded-full"
+            />
+          </Link>
           <div className="ml-3 flex flex-col text-2xl">
             <div className="text-base font-bold text-slate-300">
               <span>{`@${props.tweet.user.username}`}</span>
@@ -42,7 +44,7 @@ const CreatePostWizard = () => {
   const [content, setContent] = useState("");
 
   const ctx = api.useContext();
-  const { mutate, isLoading } = api.example.createPost.useMutation({
+  const { mutate, isLoading } = api.posts.createPost.useMutation({
     onSuccess: () => {
       setContent("");
       ctx.invalidate();
@@ -76,7 +78,7 @@ const CreatePostWizard = () => {
 };
 
 const Feed = () => {
-  const { data, isLoading: postsLoading } = api.example.getAll.useQuery();
+  const { data, isLoading: postsLoading } = api.posts.getAll.useQuery();
   const { isLoaded: userLoaded } = useUser();
   if (postsLoading || !userLoaded)
     return (
