@@ -16,7 +16,7 @@ const CreatePostWizard = () => {
   const [content, setContent] = useState("");
 
   const ctx = api.useContext();
-  const { mutate, isLoading } = api.posts.createPost.useMutation({
+  const { mutate, isLoading, error } = api.posts.createPost.useMutation({
     onSuccess: () => {
       setContent("");
       ctx.invalidate();
@@ -34,20 +34,27 @@ const CreatePostWizard = () => {
           className="m-4 h-14 w-14 rounded-full"
         />
       </Link>
-      <input
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            mutate({ message: content });
-          }
-        }}
-        disabled={isLoading}
-        className="my-4 grow bg-transparent py-4 pr-20 text-xl outline-none"
-        placeholder="Type some emojis"
-        autoFocus
-      />
+      <div>
+        <input
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              mutate({ message: content });
+            }
+          }}
+          disabled={isLoading}
+          className="my-4 grow bg-transparent py-4 pr-20 text-xl outline-none"
+          placeholder="Type some emojis"
+          autoFocus
+        />
+        {error?.data?.zodError?.fieldErrors.message && (
+          <span className="mb-8 text-red-500">
+            {error.data.zodError.fieldErrors.message}
+          </span>
+        )}
+      </div>
       <div className="absolute right-2 flex h-full flex-col justify-center">
         {!!content && (
           <button onClick={() => mutate({ message: content })}>POST!</button>
