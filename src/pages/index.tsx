@@ -10,6 +10,7 @@ dayjs.extend(relativeTime);
 import { api } from "~/utils/api";
 import { TweetView } from "~/components/post-view";
 import { LoadingPage } from "~/components/loading";
+import Link from "next/link";
 
 const CreatePostWizard = () => {
   const [content, setContent] = useState("");
@@ -26,11 +27,13 @@ const CreatePostWizard = () => {
 
   return (
     <div className="relative flex w-full">
-      <img
-        src={user?.profileImageUrl}
-        alt="Profile"
-        className="m-4 h-14 w-14 rounded-full"
-      />
+      <Link href={`/profile/${user?.username}`}>
+        <img
+          src={user?.profileImageUrl}
+          alt="Profile"
+          className="m-4 h-14 w-14 rounded-full"
+        />
+      </Link>
       <input
         value={content}
         onChange={(e) => setContent(e.target.value)}
