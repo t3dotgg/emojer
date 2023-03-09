@@ -1,5 +1,6 @@
 import type { User as ClerkUser } from "@clerk/nextjs/dist/api";
 import { clerkClient } from "@clerk/nextjs/server";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import {
@@ -47,13 +48,15 @@ export const postsRouter = createTRPCRouter({
         where: { id: input.id },
       });
 
-      if (!post) throw new Error("Post not found");
+      if (!post)
+        throw new TRPCError({ code: "NOT_FOUND", message: "Post not found" });
 
       const user = await clerkClient.users
         .getUser(post!.authorId)
         .then(filterUser);
 
-      if (!user) throw new Error("Poster not found");
+      if (!user)
+        throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
 
       return { ...post, user };
     }),
@@ -72,7 +75,11 @@ export const postsRouter = createTRPCRouter({
         .getUserList({ userId: userIds })
         .then((user) => user.map(filterUser));
 
-      if (posts.length === 0) throw new Error("No posts from this user");
+      if (posts.length === 0)
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User has no posts",
+        });
 
       return posts.map((post) => ({
         ...post,
@@ -85,7 +92,11 @@ export const postsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { success } = await ratelimit.limit(ctx.session.userId);
 
-      if (!success) throw new Error("Rate limit exceeded");
+      if (!success)
+        throw new TRPCError({
+          code: "TOO_MANY_REQUESTS",
+          message: "You've reached your ratelimit. Please try again later",
+        });
 
       const post = await ctx.prisma.post.create({
         data: {
