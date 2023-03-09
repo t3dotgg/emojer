@@ -7,6 +7,6 @@
 - [ ] Better submit behavior on post
 - [ ] Update zod and use emoji
 - [ ] Caching on pages that aren't home page
-- [ ] Better login flow
+- [x] Better login flow
 - [ ] Order of events for tutorial
-- [ ] Rate limiter
+- [x] Rate limiter
