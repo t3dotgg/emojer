@@ -1,4 +1,4 @@
-import { useUser } from "@clerk/nextjs";
+import { useClerk, useUser } from "@clerk/nextjs";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -77,9 +77,19 @@ const CreatePostWizard = () => {
   );
 };
 
+const CustomSignIn = () => {
+  const { openSignIn } = useClerk();
+
+  return (
+    <div className="flex flex-col items-center justify-center text-xl">
+      <button onClick={() => openSignIn()}>Sign In</button>
+    </div>
+  );
+};
+
 const Feed = () => {
   const { data, isLoading: postsLoading } = api.posts.getAll.useQuery();
-  const { isLoaded: userLoaded } = useUser();
+  const { isLoaded: userLoaded, user } = useUser();
 
   if (postsLoading || !userLoaded)
     return (
@@ -90,7 +100,8 @@ const Feed = () => {
 
   return (
     <div className="flex h-full w-full grow flex-col border-l border-r border-zinc-700 md:w-[600px]">
-      <CreatePostWizard />
+      {!user && <CustomSignIn />}
+      {user && <CreatePostWizard />}
       {data?.map((post) => (
         <TweetView key={post.id} tweet={post} />
       ))}
