@@ -1,5 +1,6 @@
 import type { User as ClerkUser } from "@clerk/nextjs/dist/api";
 import { clerkClient } from "@clerk/nextjs/server";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import {
@@ -33,7 +34,8 @@ export const profileRouter = createTRPCRouter({
       const user = await userPromise;
       const posts = await postsPromise;
 
-      if (!user) throw new Error("User not found");
+      if (!user)
+        throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
 
       return { user, posts };
     }),
@@ -46,7 +48,8 @@ export const profileRouter = createTRPCRouter({
         .then((m) => m.map(filterUser));
       const [user] = await userPromise;
 
-      if (!user) throw new Error("User not found");
+      if (!user)
+        throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
 
       return user;
     }),
