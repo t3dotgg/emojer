@@ -34,6 +34,12 @@ const CreatePostWizard = () => {
       <input
         value={content}
         onChange={(e) => setContent(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            mutate({ message: content });
+          }
+        }}
         disabled={isLoading}
         className="my-4 grow bg-transparent py-4 pr-20 text-xl outline-none"
         placeholder="Type some emojis"

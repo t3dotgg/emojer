@@ -57,11 +57,7 @@ export const TweetView = React.memo(
 
               <Timestamp
                 createdAt={props.tweet.createdAt}
-                link={
-                  props.noPostLink
-                    ? undefined
-                    : `/profile/${props.tweet.user.username}`
-                }
+                link={props.noPostLink ? undefined : `/post/${props.tweet.id}`}
               />
             </div>
             <div className="text-slate-300">{props.tweet.content}</div>
