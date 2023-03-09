@@ -1,37 +1,12 @@
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import { GetStaticProps, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
 dayjs.extend(relativeTime);
 
-import { api, RouterOutputs } from "~/utils/api";
+import { api } from "~/utils/api";
 import { Loading } from "~/components/loading";
-
-type TweetData = RouterOutputs["posts"]["getAll"][number];
-
-const TweetView = (props: { tweet: TweetData }) => {
-  return (
-    <div className="border-t border-zinc-700 p-4 shadow-lg">
-      <div className="flex items-center">
-        <img
-          src={props.tweet.user.profileImageUrl}
-          alt="Profile"
-          className="h-14 w-14 rounded-full"
-        />
-        <div className="ml-3 flex flex-col text-2xl">
-          <div className="text-base font-bold text-slate-300">
-            <span>{`@${props.tweet.user.username}`}</span>
-            <span className="font-thin">{` · ${dayjs(
-              props.tweet.createdAt
-            ).fromNow()}`}</span>
-          </div>
-          <div className="text-slate-300">{props.tweet.content}</div>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const Feed = (props: { id: string }) => {
   const { data, isLoading } = api.posts.getPostsByUserId.useQuery({
@@ -55,7 +30,7 @@ const Feed = (props: { id: string }) => {
 };
 
 const ProfileView = (
-  props: InferGetServerSidePropsType<typeof getServerSideProps>
+  props: InferGetServerSidePropsType<typeof getStaticProps>
 ) => {
   const { data } = api.profile.getProfileByUsername.useQuery({
     username: props.slug,
@@ -90,22 +65,15 @@ import superjson from "superjson";
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
+import { TweetView } from "~/components/post-view";
 
-export async function getServerSideProps(
-  context: GetServerSidePropsContext<{ slug: string }>
-) {
+export const getStaticProps: GetStaticProps = async (context) => {
   const ssg = createProxySSGHelpers({
     router: appRouter,
     ctx: { session: null, prisma },
     transformer: superjson,
   });
   const slug = context.params?.slug as string;
-
-  // Cache the shit out of it
-  context.res.setHeader(
-    "Cache-Control",
-    "public, s-maxage=10, stale-while-revalidate=99999"
-  );
 
   await ssg.profile.getProfileByUsername.prefetch({ username: slug });
   // Make sure to return { props: { trpcState: ssg.dehydrate() } }
@@ -115,4 +83,8 @@ export async function getServerSideProps(
       slug,
     },
   };
+};
+
+export async function getStaticPaths() {
+  return { paths: [], fallback: "blocking" };
 }
