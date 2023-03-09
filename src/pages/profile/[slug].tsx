@@ -6,6 +6,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 import { api, RouterOutputs } from "~/utils/api";
+import { Loading } from "~/components/loading";
 
 type TweetData = RouterOutputs["posts"]["getAll"][number];
 
@@ -53,7 +54,7 @@ const Feed = (props: { id: string }) => {
   );
 };
 
-const PostView = (
+const ProfileView = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>
 ) => {
   const { data } = api.profile.getProfileByUsername.useQuery({
@@ -83,13 +84,12 @@ const PostView = (
   );
 };
 
-export default PostView;
+export default ProfileView;
 
 import superjson from "superjson";
 import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
-import { Loading } from "~/components/loading";
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ slug: string }>
@@ -100,6 +100,12 @@ export async function getServerSideProps(
     transformer: superjson,
   });
   const slug = context.params?.slug as string;
+
+  // Cache the shit out of it
+  context.res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=10, stale-while-revalidate=99999"
+  );
 
   await ssg.profile.getProfileByUsername.prefetch({ username: slug });
   // Make sure to return { props: { trpcState: ssg.dehydrate() } }

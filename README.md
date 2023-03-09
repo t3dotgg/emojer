@@ -2,7 +2,7 @@
 
 - [ ] Pagination
 - [ ] Cleanup
-- [ ] Fix links in posts
+- [x] Fix links in posts
 - [ ] Metadata in post page
 - [ ] Better submit behavior on post
 - [ ] Update zod and use emoji
