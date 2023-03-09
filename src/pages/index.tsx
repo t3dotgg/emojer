@@ -8,8 +8,8 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 import { api } from "~/utils/api";
-import { Loading } from "~/components/loading";
 import { TweetView } from "~/components/post-view";
+import { LoadingPage } from "~/components/loading";
 
 const CreatePostWizard = () => {
   const [content, setContent] = useState("");
@@ -62,12 +62,7 @@ const Feed = () => {
   const { data, isLoading: postsLoading } = api.posts.getAll.useQuery();
   const { isLoaded: userLoaded, user } = useUser();
 
-  if (postsLoading || !userLoaded)
-    return (
-      <div className="absolute flex h-screen w-screen items-center justify-center">
-        <Loading size={128} />
-      </div>
-    );
+  if (postsLoading || !userLoaded) return <LoadingPage />;
 
   return (
     <div className="flex h-full w-full grow flex-col border-l border-r border-zinc-700 md:w-[600px]">

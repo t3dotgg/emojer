@@ -6,19 +6,13 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 import { api } from "~/utils/api";
-import { Loading } from "~/components/loading";
 
 const Feed = (props: { id: string }) => {
   const { data, isLoading } = api.posts.getPostsByUserId.useQuery({
     id: props.id,
   });
 
-  if (isLoading)
-    return (
-      <div className="absolute flex h-screen w-screen items-center justify-center">
-        <Loading size={128} />
-      </div>
-    );
+  if (isLoading) return <LoadingPage />;
 
   return (
     <>
@@ -66,6 +60,7 @@ import { createProxySSGHelpers } from "@trpc/react-query/ssg";
 import { appRouter } from "~/server/api/root";
 import { prisma } from "~/server/db";
 import { TweetView } from "~/components/post-view";
+import { LoadingPage } from "~/components/loading";
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const ssg = createProxySSGHelpers({

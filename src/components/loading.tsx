@@ -1,6 +1,6 @@
 import React from "react";
 
-export const Loading = React.memo((props: { size?: number }) => {
+const LoadingInternal = (props: { size?: number }) => {
   const size = props.size ?? "24";
   return (
     <svg
@@ -14,4 +14,14 @@ export const Loading = React.memo((props: { size?: number }) => {
       <circle className="spinner_ZCsl spinner_gaIW" cx="12" cy="12" r="0" />
     </svg>
   );
-});
+};
+
+export const LoadingSpinner = React.memo(LoadingInternal);
+
+const LoadingPageInternal = () => (
+  <div className="absolute top-0 right-0 flex h-screen w-screen items-center justify-center">
+    <LoadingInternal size={128} />
+  </div>
+);
+
+export const LoadingPage = React.memo(LoadingPageInternal);
