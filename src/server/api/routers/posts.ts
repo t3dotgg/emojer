@@ -7,6 +7,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
+import { ratelimit } from "~/server/ratelimit";
 import { emojiValidator } from "~/shared/emojiValidator";
 
 const filterUser = (user: ClerkUser) => {
@@ -81,6 +82,10 @@ export const postsRouter = createTRPCRouter({
   createPost: protectedProcedure
     .input(emojiValidator)
     .mutation(async ({ ctx, input }) => {
+      const { success } = await ratelimit.limit(ctx.session.userId);
+
+      if (!success) throw new Error("Rate limit exceeded");
+
       const post = await ctx.prisma.post.create({
         data: {
           content: input.message,
