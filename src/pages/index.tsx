@@ -15,27 +15,43 @@ type TweetData = RouterOutputs["posts"]["getAll"][number];
 
 const TweetView = (props: { tweet: TweetData }) => {
   return (
-    <div className="border-t border-zinc-700 p-4 shadow-lg">
-      <Link href={`/post/${props.tweet.id}`}>
-        <div className="flex items-center">
-          <Link href={`/profile/${props.tweet.user.username}`}>
-            <img
-              src={props.tweet.user.profileImageUrl}
-              alt={`Profile for ${props.tweet.user.username}`}
-              className="h-14 w-14 rounded-full"
-            />
-          </Link>
-          <div className="ml-3 flex flex-col text-2xl">
-            <div className="text-base font-bold text-slate-300">
+    <div className="relative border-t border-zinc-700 p-4 shadow-lg">
+      <Link
+        href={`/post/${props.tweet.id}`}
+        className="absolute left-0 top-0 z-0 h-full w-full"
+      />
+      <div className="pointer-events-none relative z-10 flex items-center">
+        <Link
+          href={`/profile/${props.tweet.user.username}`}
+          className="pointer-events-auto"
+        >
+          <img
+            src={props.tweet.user.profileImageUrl}
+            alt={`Profile for ${props.tweet.user.username}`}
+            className="h-14 w-14 rounded-full"
+          />
+        </Link>
+        <div className="ml-3 flex flex-col text-2xl">
+          <div className="text-base font-bold text-slate-300">
+            <Link
+              href={`/profile/${props.tweet.user.username}`}
+              className="pointer-events-auto"
+            >
               <span>{`@${props.tweet.user.username}`}</span>
+            </Link>
+
+            <Link
+              href={`/post/${props.tweet.id}`}
+              className="pointer-events-auto"
+            >
               <span className="font-thin">{` · ${dayjs(
                 props.tweet.createdAt
               ).fromNow()}`}</span>
-            </div>
-            <div className="text-slate-300">{props.tweet.content}</div>
+            </Link>
           </div>
+          <div className="text-slate-300">{props.tweet.content}</div>
         </div>
-      </Link>
+      </div>
     </div>
   );
 };
