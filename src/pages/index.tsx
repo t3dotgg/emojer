@@ -48,9 +48,20 @@ const CreatePostWizard = () => {
         placeholder="Type some emojis"
         autoFocus
       />
-      <div className="absolute right-2 flex h-full flex-col justify-center">
+      <div className="absolute right-12 flex h-full flex-col justify-center">
         {!!content && (
-          <button onClick={() => mutate({ message: content })}>POST!</button>
+          <button
+            onClick={() => mutate({ message: content })}
+            className="relative"
+          >
+            POST!
+            {isLoading && (
+              <div className="absolute -right-6 top-1" role="status">
+                <div className="h-4 w-4 animate-spin rounded-full border-[3px] border-white border-r-transparent" />
+                <span className="sr-only">Loading...</span>
+              </div>
+            )}
+          </button>
         )}
       </div>
     </div>
