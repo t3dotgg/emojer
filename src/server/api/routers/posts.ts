@@ -95,7 +95,7 @@ export const postsRouter = createTRPCRouter({
       if (!success)
         throw new TRPCError({
           code: "TOO_MANY_REQUESTS",
-          message: "You've reached your ratelimit. Please try again later",
+          message: "You've been posting too much. Chill a bit?",
         });
 
       const post = await ctx.prisma.post.create({

@@ -11,6 +11,7 @@ import { api } from "~/utils/api";
 import { TweetView } from "~/components/post-view";
 import { LoadingPage } from "~/components/loading";
 import Link from "next/link";
+import { toast } from "react-hot-toast";
 
 const CreatePostWizard = () => {
   const [content, setContent] = useState("");
@@ -20,6 +21,20 @@ const CreatePostWizard = () => {
     onSuccess: () => {
       setContent("");
       ctx.invalidate();
+    },
+    onError: (e) => {
+      console.log(e);
+
+      const mainError = e.data;
+      console.log(mainError);
+
+      if (e.data?.zodError?.fieldErrors?.["message"]?.[0]) {
+        toast.error(`${e.data.zodError.fieldErrors?.["message"]?.[0]}`);
+        console.log(e.data.zodError.fieldErrors["message"][0]);
+        return;
+      }
+
+      toast.error(e.message);
     },
   });
 

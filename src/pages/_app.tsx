@@ -7,6 +7,7 @@ import {
 import { AppProps } from "next/app";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { Toaster } from "react-hot-toast";
 import "~/styles/globals.css";
 
 //  List pages you want to be publicly accessible, or leave empty if
@@ -32,6 +33,7 @@ function MainApp({ Component, pageProps }: AppProps) {
         <title>😶 Emojer</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <Toaster position="bottom-center" />
       {isPublicPage ? (
         <Component {...pageProps} />
       ) : (
