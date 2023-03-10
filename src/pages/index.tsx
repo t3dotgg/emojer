@@ -23,17 +23,13 @@ const CreatePostWizard = () => {
       ctx.invalidate();
     },
     onError: (e) => {
-      console.log(e);
-
-      const mainError = e.data;
-      console.log(mainError);
-
-      if (e.data?.zodError?.fieldErrors?.["message"]?.[0]) {
-        toast.error(`${e.data.zodError.fieldErrors?.["message"]?.[0]}`);
-        console.log(e.data.zodError.fieldErrors["message"][0]);
+      // Custom message for emojis
+      if (e.message.includes("emoji")) {
+        toast.error(`PLEASE only post emojis <3`);
         return;
       }
 
+      // Default
       toast.error(e.message);
     },
   });
