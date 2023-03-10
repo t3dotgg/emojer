@@ -19,6 +19,11 @@ const Feed = (props: { id: string }) => {
       {data?.map((post) => (
         <TweetView key={post.id} tweet={post} />
       ))}
+      {data?.length === 0 && (
+        <div className="border-t border-zinc-700 p-4 text-center text-xl">
+          No posts on this profile 😔
+        </div>
+      )}
     </>
   );
 };

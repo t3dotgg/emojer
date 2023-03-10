@@ -4,6 +4,6 @@ Roast it pls it needs to be really good
 
 ### TODO
 
-- [ ] Error handling in form
-- [ ] Throw proper tRPC errors
-- [ ] Empty state for profile view
+- [x] Error handling in form
+- [x] Throw proper tRPC errors
+- [x] Empty state for profile view
